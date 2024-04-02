@@ -2,30 +2,40 @@
 import { fetchReferralData } from "@/api/fetchReferralData";
 import Image from "next/image";
 import Link from "next/link";
-import {useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const Loader = ()=>{
-  return(
-    <div className="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-  )
-}
+const Loader = () => {
+  return (
+    <div className="lds-roller">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  );
+};
 
 export default function Refer() {
   const [name, setName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [notFound, setNotFound] = useState<boolean>(false);
-//   const [serverError, setServerError] = useState<boolean>(false);
-  const searchParams = useSearchParams()
- 
-  const inviteId = searchParams.get('inviteid')
+  const [url, setUrl] = useState<string>("")
+  //   const [serverError, setServerError] = useState<boolean>(false);
+  // Find the index of the "=" sign
+  const index = url.indexOf("=");
+
+  // Extract the substring starting from the character after the "=" sign
+  const inviteId = url.substring(index + 1);
 
   const loadReferralData = async () => {
     try {
       const res = await fetchReferralData(inviteId as string);
-
-      setIsLoading(false)
+      setIsLoading(false);
 
       if (res?.status == 200) {
         setIsLoading(false);
@@ -46,6 +56,9 @@ export default function Refer() {
   };
 
   useEffect(() => {
+    if(typeof window !=="undefined"){
+        setUrl(window.location.href)
+      }
     loadReferralData();
   }, []);
 
@@ -67,7 +80,7 @@ export default function Refer() {
         <section className="modal fixed flex justify-center top-[100px] items-center left-0 w-full bg-[#2b2c2f70]">
           <section className="flex items-center bg-black py-[20px] px-[35px] rounded-[10px]">
             <span className="mr-[20px] text-white text-[22px]">Loading</span>
-            <Loader/>
+            <Loader />
           </section>
         </section>
       )}
